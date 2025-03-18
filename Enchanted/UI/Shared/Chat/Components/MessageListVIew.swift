@@ -41,55 +41,57 @@ struct MessageListView: View {
         ZStack(alignment: .top) {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
-                    ForEach(messages) { message in
-                        let contextMenu = ContextMenu(menuItems: {
-                            Button(action: {Clipboard.shared.setString(message.content)}) {
-                                Label("Copy", systemImage: "doc.on.doc")
-                            }
-                            
+                    VStack {
+                        ForEach(messages) { message in
+                            let contextMenu = ContextMenu(menuItems: {
+                                Button(action: {Clipboard.shared.setString(message.content)}) {
+                                    Label("Copy", systemImage: "doc.on.doc")
+                                }
+                                
 #if os(iOS) || os(visionOS)
-                            Button(action: { messageSelected = message }) {
-                                Label("Select Text", systemImage: "selection.pin.in.out")
-                            }
-                            
-                            Button(action: {
-                                onReadAloud(message.content)
-                            }) {
-                                Label("Read Aloud", systemImage: "speaker.wave.3.fill")
-                            }
+                                Button(action: { messageSelected = message }) {
+                                    Label("Select Text", systemImage: "selection.pin.in.out")
+                                }
+                                
+                                Button(action: {
+                                    onReadAloud(message.content)
+                                }) {
+                                    Label("Read Aloud", systemImage: "speaker.wave.3.fill")
+                                }
 #endif
-                            
-                            if message.role == "user" {
-                                Button(action: {
-                                    withAnimation { editMessage = message }
-                                }) {
-                                    Label("Edit", systemImage: "pencil")
+                                
+                                if message.role == "user" {
+                                    Button(action: {
+                                        withAnimation { editMessage = message }
+                                    }) {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
                                 }
-                            }
-                            
-                            if editMessage?.id == message.id {
-                                Button(action: {
-                                    withAnimation { editMessage = nil }
-                                }) {
-                                    Label("Unselect", systemImage: "pencil")
+                                
+                                if editMessage?.id == message.id {
+                                    Button(action: {
+                                        withAnimation { editMessage = nil }
+                                    }) {
+                                        Label("Unselect", systemImage: "pencil")
+                                    }
                                 }
-                            }
-                        })
-                        
-                        ChatMessageView(
-                            message: message,
-                            showLoader: conversationState == .loading && messages.last == message,
-                            userInitials: userInitials,
-                            editMessage: $editMessage
-                        )
-                        .listRowInsets(EdgeInsets())
-                        .listRowSeparator(.hidden)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
-                        .contentShape(Rectangle())
-                        .contextMenu(contextMenu)
-                        .runningBorder(animated: message.id == editMessage?.id)
-                        .id(message)
+                            })
+                            
+                            ChatMessageView(
+                                message: message,
+                                showLoader: conversationState == .loading && messages.last == message,
+                                userInitials: userInitials,
+                                editMessage: $editMessage
+                            )
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+                            .contentShape(Rectangle())
+                            .contextMenu(contextMenu)
+                            .runningBorder(animated: message.id == editMessage?.id)
+                            .id(message)
+                        }
                     }
                 }
                 .onAppear {

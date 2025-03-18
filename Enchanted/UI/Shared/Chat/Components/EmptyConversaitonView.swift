@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct EmptyConversaitonView: View, KeyboardReadable {
+    @Environment(\.openURL) private var openURL
     @State var showPromptsAnimation = false
     @State var prompts: [SamplePrompts] = []
     var sendPrompt: (String) -> ()
+    @State private var isHovering = false
 #if os(iOS)
     @State var isKeyboardVisible = false
 #endif
@@ -22,28 +24,42 @@ struct EmptyConversaitonView: View, KeyboardReadable {
 #endif
     @State var visibleItems = Set<Int>()
     
+    func onFreysaTap() {
+        if let url = URL(string: "https://freysa.ai") {
+            openURL(url)
+        }
+    }
+    
     var body: some View {
         VStack {
             Spacer()
             
             VStack(spacing: 25) {
-                Text("Enchanted")
-                    .font(Font.system(size: 46, weight: .thin))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [Color(hex: "4285f4"), Color(hex: "9b72cb"), Color(hex: "d96570"), Color(hex: "#d96570")],
-                            startPoint: .leading,
-                            endPoint: .trailing
+                VStack(alignment: .center) {
+                    Text("Enchanted")
+                        .font(Font.system(size: 46, weight: .thin))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color(hex: "4285f4"), Color(hex: "9b72cb"), Color(hex: "d96570"), Color(hex: "#d96570")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                    )
-                
-                Text("How can I help you today?")
-                    .font(.title2)
-                    .fontWeight(.light)
-                #if !os(visionOS)
-                    .foregroundStyle(Color(.systemGray))
-                #endif
+                    
+//                    Button(action: onFreysaTap) {
+//                        Text("by FREYSA")
+//                            .font(.system(size: isHovering ? 19 : 17, weight: .light))
+//                            .scaleEffect(isHovering ? 1.05 : 1.0)
+//                            .opacity(isHovering ? 0.8 : 1.0)
+//                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovering)
+//
+//                    }
+//                    .buttonStyle(.plain)
+//                    .onHover { hovering in
+//                                isHovering = hovering
+//                            }
+                }
                 
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 15) {
                     ForEach(0..<prompts.prefix(4).count, id: \.self) { index in

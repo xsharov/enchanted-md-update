@@ -13,7 +13,7 @@ final class LanguageModelSD: Identifiable {
     @Attribute(.unique) var name: String
     var isAvailable: Bool = false
     var imageSupport: Bool = false
-    var modelProvider = ModelProvider.ollama
+    @Attribute var modelProvider: ModelProvider? = ModelProvider.ollama
     
     @Relationship(deleteRule: .cascade, inverse: \ConversationSD.model)
     var conversations: [ConversationSD]? = []
